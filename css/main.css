@@ -1,0 +1,62 @@
+.faq {
+	padding: 20px 0 30px;
+}
+.accordions {
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 1.2em;
+}
+.accordion {
+    width: 100%;
+    color: white;
+    overflow: hidden;
+	border-bottom: 1px solid;
+}
+.acc-label {
+    display: flex;
+    justify-content: space-between;
+    padding: 1em;
+    background-color: #333;
+    font-weight: 500;
+    cursor: pointer;
+}
+.accordion:last-child {
+    border-bottom: none;
+}
+
+.acc-label:hover {
+    background-color: #222;
+}
+
+.acc-label::after {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f107";
+    width: 1em;
+    height: 1em;
+    text-align: center;
+    transition: all 0.4s ease;
+}
+
+.acc-content {
+    max-height: 0;
+    padding: 0 1em;
+    color: aliceblue;
+    background-color: #444;
+    transition: all 0.4s ease;
+}
+
+input {
+    position: absolute;
+    opacity: 0;
+    z-index: -1;
+}
+
+input:checked+.acc-label::after {
+    transform: rotate(-90deg);
+}
+
+input:checked~.acc-content {
+    max-height: 100vh;
+    padding: 1em;
+}
