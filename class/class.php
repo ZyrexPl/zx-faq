@@ -146,7 +146,7 @@ class ZXFAQ_Faq {
     //zwraca obiekt
     function get_faq_post($id) {
       $nazwa = $this->table_name;
-        $faq_post = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT * FROM %s WHERE id = %d", $nazwa, $id ) );
+        $faq_post = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT * FROM %1s WHERE id = %d", $nazwa, $id ) );
         if(isset($faq_post[0])){
             return $faq_post[0];
         } else {
