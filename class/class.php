@@ -18,7 +18,9 @@ class ZXFAQ_Faq {
         if(isset($_POST['faq_action'])) {
             if($_POST['faq_action'] == 'add') {
                 //Dodawanie wiadomości
-                if($this->add_post($_POST['pytanie'], $_POST['odpowiedz'])) {
+                $pytanie = sanitize_text_field( $_POST['pytanie'] );
+                $odpowiedz = sanitize_text_field( $_POST['odpowiedz'] );
+                if($this->add_post($pytanie, $odpowiedz)) {
                     $notice = 'Dodano pytanie i odpowiedź';
                     $klasa = 'notice-success';
                 } else {
@@ -26,8 +28,11 @@ class ZXFAQ_Faq {
                     $klasa = 'notice-error';
                 }
             } else if($_POST['faq_action'] == 'edit') {
+              $faq_id = sanitize_text_field( $_POST['faq_post_id'] );
+              $pytanie = sanitize_text_field( $_POST['pytanie'] );
+              $odpowiedz = sanitize_text_field( $_POST['odpowiedz'] );
                 //edycja wiadomości
-                if($this->edit_post($_POST['faq_post_id'],$_POST['pytanie'], $_POST['odpowiedz'])) {
+                if($this->edit_post($faq_id,$pytanie, $odpowiedz)) {
                     $notice = 'Edytowano';
                     $klasa = 'notice-success';
                 } else {
@@ -38,8 +43,9 @@ class ZXFAQ_Faq {
         }
 
         if(isset($_POST['faq_delete'])) {
+          $faq_id = sanitize_text_field( $_POST['faq_post_id'] );
             //usuwanie wiadomości
-            if($this->delete_post($_POST['faq_post_id'])) {
+            if($this->delete_post($faq_id)) {
                 $notice = 'Usunięto';
                 $klasa = 'notice-success';
             } else {
@@ -51,7 +57,8 @@ class ZXFAQ_Faq {
         //pobieram wiadomość do edycji
         $edit = FALSE;
         if(isset($_POST['faq_to_edit'])) {
-            $edit = $this->get_faq_post($_POST['faq_post_id']);
+          $faq_id = sanitize_text_field( $_POST['faq_post_id'] );
+            $edit = $this->get_faq_post($faq_id);
         }
 
         ?>
@@ -123,26 +130,23 @@ class ZXFAQ_Faq {
     }
 
     function add_post($pytanie, $odpowiedz) {
-        //sprawdzam czy nie pusty i czy jest zalogowany
+        //sprawdzam czy nie pusty
         if(trim($pytanie) != ''){
-            $pytanie = esc_sql($pytanie);
-            $odpowiedz = esc_sql($odpowiedz);
             $this->wpdb->insert( $this->table_name, array('pytanie' => $pytanie, 'odpowiedz' => $odpowiedz) );
-
             return TRUE;
         }
         return FALSE;
     }
 
     function get_faq() {
-        return $this->wpdb->get_results( $this->wpdb->prepare("SELECT * FROM $this->table_name") );
+        return $this->wpdb->get_results("SELECT * FROM $this->table_name");
     }
 
     //funkcja służąca do pobrania wiadomości o konkretnym id
     //zwraca obiekt
     function get_faq_post($id) {
-        $id = esc_sql($id);
-        $faq_post = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT * FROM $this->table_name WHERE id = %d", $id ) );
+      $nazwa = $this->table_name;
+        $faq_post = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT * FROM %s WHERE id = %d", $nazwa, $id ) );
         if(isset($faq_post[0])){
             return $faq_post[0];
         } else {
